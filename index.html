@@ -1,92 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png">
-        <title>By CMQ</title>
-        <meta name="description" content="CMQ的个人网站">
-        <link rel="stylesheet" type="text/css" href="css/h.9c69ed6c.css">
-        <link rel="stylesheet" type="text/css" href="css/nekotora.99cf6f8c.css">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-137340638-1"></script>
-        <script>function a(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],a("js",new Date),a("config","UA-137340638-1");</script>
-        </head>
-        <body> 
-        <nav> 
-        <a href="/" class="active">CMQ Index</a> <a class="clip"></a>
-        <a href="//jiaqianyu.fun">小贾</a> 
-        </nav> 
-          
-          <body onContextMenu="alert('禁止查看源代码，已经记录你的行为，马上有FBI敲门'); return false" NOOP="if (window.event != null && window.event.button == 2) alert ('Thanks...');">
-<body data-phone-cc-input="1">
-<body><link href="css/toastr.css" rel="stylesheet">
-<link href="css/style.css" rel="stylesheet">
-<link href="css/toastr.min.css" rel="stylesheet">
-<script src="js/toastr.min.js"></script>
-<style>
- .toast-bottom-center {
-  position: absolute;
-  left: 30px;
-  right:10px;
-  top: 20px;
-}
-   </style>
-   
-        <div class="background"> 
-        <canvas id="startrack"></canvas> 
-        <div class="cover"></div> </div>
-        <div class="main"> <div class="ch intro">
-        <div class="container"> <div class="hello">
-            <h1 id="slogan">思考中...</h1> 
-            <h2> <div class="circle"> <span></span> <span></span> 
-            <span></span> </div>By CMQ </h2> </div> </div> </div> 
-            <div class="ch about"> <div class="container"> 
-            <h2 class="chtitle">我 有 <span>玉 玉 症</span> ！</h2> 
-            <div class="clear"> <div class="introduct"> 
-            <img class="avatar" src="png/WKN.png"> 
-            <P>一切在变 那个男孩学会抽烟🤨那张笑脸 仿佛早已消失不见🥺那一年 那一天 曾走过的时间🤯我们都以为一直这样永远不变😘终于这一天 我和你再一次的相见🥰却发现你身旁有张陌生的脸😨昔日的场景就这样被改变上演🤕才发现我们早就回不及从前😠如今的我已经习惯一个人过🙄后来那些人就趁早消失在我的生活😜我也试图翻开电话簿想和你联络😝可输入熟悉的号码通话键却从不敢拨🫠总是在想天冷的你是否穿的暖和😵没有我在身边你是否也会难过🤔他们说一切是我太傻太过执着🫢或许是吧我总把一切想得太多😫我知道你不爱我😭可我还为你执着🥹我不愿就这样将你给错过😘我知道你不爱我😂又何必假装难过🤗也许这样的结果是种解脱🫡</p> 
-            <div class="chatbox">   <div class="line loading"> <span></span> 
-            <span></span> <span></span> </div> </div> </div> 
-            <ul class="skill clear"> <li> <p>Windows</p> 
-            <div class="progress"> <div style="width:88%;"></div>
-            <span>使用Windows的能力</span> </div> </li> 
-            <li> <p>OC</p> 
-            <div class="progress"> <div style="width:60%;"></div>
-            <span>超频的能力</span> 
-            </div> </li> <li> <p>Stable Diffusion</p>
-            <div class="progress"> <div style="width:60%;"></div>
-            <span>使用SD的能力</span> </div> </li> 
-            <li> <p>AI</p>
-            <div class="progress"> 
-            <div style="width:65%;">
-            </div><span>对神经网络的了解</span> </div> </li> 
-            <li> <p>Python</p> <div class="progress"> 
-            <div style="width:40%;"></div>
-            <span>使用Py的能力</span> </div> </li> 
-            <li> <p>3D Print</p> <div class="progress"> 
-            <div style="width:82%;"></div>
-            <span>调教3D打印机的能力</span> </div> </li> 
-            <li> <p>C/CPP</p> <div class="progress"> 
-            <div style="width:9%;"></div>
-            <span>使用C/C++编写代码的能力</span> </div> </li> 
-            <li> <p>装机</p> 
-            <div class="progress"> 
-            <div style="width:99%;"></div>
-            <span>装机就是装机</span> 
-            </div> 
-            </li> 
-            </ul> 
-            </div>
-            </div> 
-            </div> 
-            <div class="find ch"> <div class="container links">
-                  </div> 
-                 </div>
-                </div>
-              <script src="js/page.3a0791a3.js"></script> 
-           <script type="text/javascript" src="js/stats.js" charset="UTF-8">
-       </script>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMQ/AZ 互动空间</title>
+    <style>
+        :root {
+            --bili-pink: #FB7299;
+            --accent-blue: #00A1D6;
+            --cubic-bezier: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* 头像容器 */
+        .avatar-container {
+            position: relative;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+
+        /* 头像样式 */
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s var(--cubic-bezier);
+        }
+
+        /* 点击动画 */
+        .avatar:active {
+            transform: scale(0.95);
+        }
+
+        /* 点击后出现的特效 */
+        .avatar-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle, 
+                rgba(251,114,153,0.3) 0%, 
+                rgba(251,114,153,0) 70%
+            );
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 点击时的动画 */
+        @keyframes avatarClick {
+            0% { transform: scale(0); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* 内容卡片 */
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* 社交链接 */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            color: var(--bili-pink);
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-container" id="avatarContainer">
+        <img src="img/avatar.jpg" class="avatar" alt="CMQ/AZ 的头像">
+        <div class="avatar-effect" id="avatarEffect"></div>
+    </div>
+
+    <div class="card">
+        <h1>CMQ / AZ</h1>
+        <p>✨炒鸡棒昏睡蛋白派💛💛💛❤️</p>
         
-  
-    </body>
+        <div class="social-links">
+            <a href="https://space.bilibili.com/1891462092" 
+               class="social-link" 
+               target="_blank">AZのB站主页</a>
+        </div>
+    </div>
+
+    <script>
+        const avatar = document.getElementById('avatarContainer');
+        const effect = document.getElementById('avatarEffect');
+
+        // 点击头像时的动画
+        avatar.addEventListener('click', function() {
+            // 创建涟漪效果
+            const ripple = document.createElement('div');
+            ripple.className = 'avatar-effect';
+            ripple.style.animation = 'avatarClick 0.6s var(--cubic-bezier) forwards';
+            this.appendChild(ripple);
+            
+            // 动画结束后移除元素
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+            
+            // 头像弹跳效果
+            this.querySelector('.avatar').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.querySelector('.avatar').style.transform = 'scale(1)';
+            }, 300);
+            
+            // 可以在这里添加其他交互逻辑
+            console.log('头像被点击了！');
+        });
+
+        // 也可以添加鼠标悬停效果
+        avatar.addEventListener('mouseenter', function() {
+            this.querySelector('.avatar').style.boxShadow = '0 8px 25px rgba(251,114,153,0.3)';
+        });
+        
+        avatar.addEventListener('mouseleave', function() {
+            this.querySelector('.avatar').style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+        });
+    </script>
+</body>
 </html>
