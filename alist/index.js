@@ -193,30 +193,6 @@ if (document.readyState === "complete") {
   window.addEventListener("DOMContentLoaded", initialize);
 }
 
-// 随机生成图片路径并更新背景图片
-function updateBackgroundImage() {
-  const desktopBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop";
-  const mobileBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile";
-  const totalImages = 150;
-
-  // 随机生成图片编号
-  const randomIndex = Math.floor(Math.random() * totalImages) + 1;
-  const desktopImage = `${desktopBaseURL}/desktop_${randomIndex}.jpg`;
-  const mobileImage = `${mobileBaseURL}/mobile_${randomIndex}.jpg`;
-
-  // 动态更新CSS变量
-  const root = document.documentElement;
-  root.style.setProperty("--desktop-bg", `url(${desktopImage})`);
-  root.style.setProperty("--mobile-bg", `url(${mobileImage})`);
-}
-
-// 页面加载时调用更新背景图片函数
-if (document.readyState === "complete") {
-  updateBackgroundImage();
-} else {
-  window.addEventListener("DOMContentLoaded", updateBackgroundImage);
-}
-
 // 监听控制台打开（检测窗口大小变化）
 let isConsoleOpen = false;
 setInterval(() => {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机图片 API</title>
+  <script>
+    // 随机生成图片路径并输出为纯文本
+    (function () {
+      const desktopBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop";
+      const mobileBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile";
+      const totalImages = 150;
+
+      // 随机生成图片编号
+      const randomIndex = Math.floor(Math.random() * totalImages) + 1;
+      const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+      const imageURL = isMobile
+        ? `${mobileBaseURL}/mobile_${randomIndex}.jpg`
+        : `${desktopBaseURL}/desktop_${randomIndex}.jpg`;
+
+      // 输出图片 URL 为纯文本
+      document.open();
+      document.write(imageURL);
+      document.close();
+    })();
+  </script>
+</head>
+<body>
+</body>
+</html>
