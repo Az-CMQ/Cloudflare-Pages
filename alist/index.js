@@ -193,6 +193,30 @@ if (document.readyState === "complete") {
   window.addEventListener("DOMContentLoaded", initialize);
 }
 
+// 随机生成图片路径并更新背景图片
+function updateBackgroundImage() {
+  const desktopBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop";
+  const mobileBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile";
+  const totalImages = 150;
+
+  // 随机生成图片编号
+  const randomIndex = Math.floor(Math.random() * totalImages) + 1;
+  const desktopImage = `${desktopBaseURL}/desktop_${randomIndex}.jpg`;
+  const mobileImage = `${mobileBaseURL}/mobile_${randomIndex}.jpg`;
+
+  // 动态更新CSS变量
+  const root = document.documentElement;
+  root.style.setProperty("--desktop-bg", `url(${desktopImage})`);
+  root.style.setProperty("--mobile-bg", `url(${mobileImage})`);
+}
+
+// 页面加载时调用更新背景图片函数
+if (document.readyState === "complete") {
+  updateBackgroundImage();
+} else {
+  window.addEventListener("DOMContentLoaded", updateBackgroundImage);
+}
+
 // 监听控制台打开（检测窗口大小变化）
 let isConsoleOpen = false;
 setInterval(() => {
@@ -229,27 +253,3 @@ function fakeError() {
   console.groupEnd();
   
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    // 获取body元素
-    const bodyElement = document.querySelector('body');
-    if (!bodyElement) return; // 如果没有找到指定的元素，则退出
-
-    // 判断是否为移动设备（屏幕宽度小于等于960px）
-    const isMobile = window.outerWidth <= 960;
-
-    // 随机生成图片索引（范围为1到150）
-    const maxImages = 150;
-    const randomImageIndex = Math.floor(Math.random() * maxImages) + 1;
-
-    // 根据设备类型选择图片路径
-    let imageUrl;
-    if (isMobile) {
-        imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile/mobile_${randomImageIndex}.jpg`;
-    } else {
-        imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop/desktop_${randomImageIndex}.jpg`;
-    }
-
-    // 设置背景图片
-    bodyElement.style.setProperty('--dynamic-bg', `url(${imageUrl})`);
-});
