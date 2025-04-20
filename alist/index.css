@@ -83,14 +83,14 @@
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-desktop.html);
+    background-image: url(https://kasuie.cc/api/img/bg?size=regular);
     z-index: 0
   }
   
   @media screen and (max-width: 960px) {
     body::before {
         /* 小屏幕设备上的背景图片 */
-        background-image:url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-mobile.html)
+        background-image:url(https://kasuie.cc/api/img/bg?type=mobile&size=regular)
     }
   }
   
