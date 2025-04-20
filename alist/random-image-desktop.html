@@ -7,12 +7,13 @@
   <script>
     // 随机生成电脑端图片路径并重定向
     (function () {
-      const desktopBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop";
+      const desktopBaseURL = "http://192.168.1.1:5244/d/Alist%E8%B5%84%E6%BA%90/img/desktop";
       const totalImages = 150;
 
       // 随机生成图片编号
       const randomIndex = Math.floor(Math.random() * totalImages) + 1;
-      const imageURL = `${desktopBaseURL}/desktop_${randomIndex}.webp`;
+      const sign = "example-sign-desktop-" + randomIndex; // 根据规律生成签名
+      const imageURL = `${desktopBaseURL}/desktop_${randomIndex}.webp?sign=${sign}`;
 
       // 重定向到随机图片
       window.location.href = imageURL;

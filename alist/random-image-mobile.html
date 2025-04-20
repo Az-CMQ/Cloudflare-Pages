@@ -7,12 +7,13 @@
   <script>
     // 随机生成手机端图片路径并重定向
     (function () {
-      const mobileBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile";
+      const mobileBaseURL = "http://192.168.1.1:5244/d/Alist%E8%B5%84%E6%BA%90/img/mobile";
       const totalImages = 150;
 
       // 随机生成图片编号
       const randomIndex = Math.floor(Math.random() * totalImages) + 1;
-      const imageURL = `${mobileBaseURL}/mobile_${randomIndex}.webp`;
+      const sign = "example-sign-mobile-" + randomIndex; // 根据规律生成签名
+      const imageURL = `${mobileBaseURL}/mobile_${randomIndex}.webp?sign=${sign}`;
 
       // 重定向到随机图片
       window.location.href = imageURL;
