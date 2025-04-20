@@ -1,1 +1,250 @@
-const _0x369bcd=_0x3b51;function _0x44aa(){const _0x3b8c9c=['mio-footer-icon','color:\x20gray;','at\x20QuantumRenderer._compile\x20(webpack:///core/quantum.js:88:21)','3382152nsZXTe','1109255gjfdNj','img','2011304uiywUD','lazy','Footer\x20data\x20parsing\x20failed:','error','.mio-footer-container','DOMContentLoaded','font-size:\x2016px;\x20color:\x20red;\x20font-weight:\x20bold;','.ico','log','forEach','remove','at\x20<anonymous>:1:11','style','\x0a\x20\x20.mio-footer-container\x20{\x0a\x20\x20\x20\x20--text-color:\x20rgb(var(--mio-text));\x0a\x20\x20\x20\x20--hover-color:\x20rgba(var(--mio-primary));\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20padding:\x201rem\x200;\x0a\x20\x20\x20\x20display:\x20flex\x20!important;\x0a\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20opacity:\x200.9;\x0a\x20\x20\x20\x20transition:\x20opacity\x200.3s\x20ease;\x0a\x20\x20}\x0a\x20\x20\x0a\x20\x20.mio-footer-container:hover\x20{\x0a\x20\x20\x20\x20opacity:\x201;\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-content\x20{\x0a\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20gap:\x201.2rem;\x0a\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20font-size:\x200.875rem;\x0a\x20\x20\x20\x20color:\x20var(--text-color);\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-link\x20{\x0a\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20gap:\x200.4rem;\x0a\x20\x20\x20\x20transition:\x20color\x200.2s\x20ease;\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-link:hover\x20{\x0a\x20\x20\x20\x20color:\x20var(--hover-color);\x0a\x20\x20\x20\x20text-decoration:\x20underline;\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-divider\x20{\x0a\x20\x20\x20\x20color:\x20rgba(var(--mio-text),\x200.4);\x0a\x20\x20\x20\x20user-select:\x20none;\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-icon\x20{\x0a\x20\x20\x20\x20width:\x201.125rem;\x0a\x20\x20\x20\x20height:\x201.125rem;\x0a\x20\x20\x20\x20border-radius:\x204px;\x0a\x20\x20\x20\x20object-fit:\x20contain;\x0a\x20\x20\x20\x20transition:\x20transform\x200.2s\x20ease;\x0a\x20\x20}\x0a\x0a\x20\x20.mio-footer-link:hover\x20.mio-footer-icon\x20{\x0a\x20\x20\x20\x20transform:\x20scale(1.1);\x0a\x20\x20}\x0a','disconnect','url','styleElement','%c🔍\x20Stack\x20Trace','font-size:\x2014px;\x20color:\x20orange;\x20line-height:\x201.5;','699462qAIMpd','createTextNode','innerWidth','134NScdQK','textContent','clear','inject','entries','parse','12WLJGmS','3961560SCoFZg','2342ymMAgm','div','setAttribute','complete','groupEnd','text','icon','mio-footer-divider','createElement','974577xCJchb','observe','querySelector','at\x20encryptedCSS\x20(webpack:///secure/module.js:42:13)','head','span','appendChild','groupCollapsed','outerHeight'];_0x44aa=function(){return _0x3b8c9c;};return _0x44aa();}(function(_0x351e73,_0x594afb){const _0x14153c=_0x3b51,_0x48e99c=_0x351e73();while(!![]){try{const _0x1c3a24=parseInt(_0x14153c(0x143))/0x1*(parseInt(_0x14153c(0x14b))/0x2)+-parseInt(_0x14153c(0x154))/0x3+parseInt(_0x14153c(0x163))/0x4+parseInt(_0x14153c(0x14a))/0x5+-parseInt(_0x14153c(0x149))/0x6*(parseInt(_0x14153c(0x161))/0x7)+-parseInt(_0x14153c(0x160))/0x8+parseInt(_0x14153c(0x140))/0x9;if(_0x1c3a24===_0x594afb)break;else _0x48e99c['push'](_0x48e99c['shift']());}catch(_0x115d1f){_0x48e99c['push'](_0x48e99c['shift']());}}}(_0x44aa,0x7193c));let footer=![];const MAX_RETRY=0xf,RETRY_INTERVAL=0xc8,footerStyle=_0x369bcd(0x170),styleManager={'styleElement':null,'inject'(){const _0x4dbccc=_0x369bcd;!this[_0x4dbccc(0x13d)]&&(this[_0x4dbccc(0x13d)]=document[_0x4dbccc(0x153)](_0x4dbccc(0x16f)),this['styleElement'][_0x4dbccc(0x144)]=footerStyle,document[_0x4dbccc(0x158)][_0x4dbccc(0x15a)](this[_0x4dbccc(0x13d)]));},'remove'(){const _0x17619b=_0x369bcd;this['styleElement']&&(this[_0x17619b(0x13d)][_0x17619b(0x16d)](),this[_0x17619b(0x13d)]=null);}},createElement=(_0x2d5208,_0x4daf44={},_0x3489bd=[])=>{const _0x240083=_0x369bcd,_0x1fa642=document[_0x240083(0x153)](_0x2d5208);return Object[_0x240083(0x147)](_0x4daf44)[_0x240083(0x16c)](([_0x58347a,_0x2a57cf])=>{const _0x1f4f70=_0x240083;_0x2a57cf!==null&&_0x2a57cf!==undefined&&_0x1fa642[_0x1f4f70(0x14d)](_0x58347a,_0x2a57cf);}),_0x3489bd[_0x240083(0x16c)](_0x537afe=>_0x1fa642[_0x240083(0x15a)](_0x537afe)),_0x1fa642;},renderFooter=_0x1c89e3=>{const _0x152ef2=_0x369bcd,_0xd1886d=document[_0x152ef2(0x156)](_0x152ef2(0x167));if(!_0xd1886d)return;const _0xcd282b=document['createDocumentFragment']();_0x1c89e3[_0x152ef2(0x16c)]((_0x4b86b9,_0xf953b9)=>{const _0x23c2bc=_0x152ef2;_0xf953b9>0x0&&_0xcd282b[_0x23c2bc(0x15a)](createElement(_0x23c2bc(0x159),{'class':_0x23c2bc(0x152)},[document[_0x23c2bc(0x141)]('|')]));const _0x379d80=createElement('a',{'class':'mio-footer-link','href':_0x4b86b9[_0x23c2bc(0x172)],'target':_0x4b86b9['target']||'_blank','rel':'noopener\x20noreferrer'});if(_0x4b86b9[_0x23c2bc(0x151)]){const _0x4f826d=createElement(_0x23c2bc(0x162),{'class':_0x23c2bc(0x15d),'src':'https://api.remio.cc/icon/'+new URL(_0x4b86b9['url'])['host']+_0x23c2bc(0x16a),'alt':_0x4b86b9[_0x23c2bc(0x150)]+'\x20icon','loading':_0x23c2bc(0x164)});_0x379d80[_0x23c2bc(0x15a)](_0x4f826d);}_0x379d80[_0x23c2bc(0x15a)](document[_0x23c2bc(0x141)](_0x4b86b9['text'])),_0xcd282b[_0x23c2bc(0x15a)](_0x379d80);});const _0x33de56=createElement(_0x152ef2(0x14c),{'class':'mio-footer-content'},[_0xcd282b]);_0xd1886d['innerHTML']='',_0xd1886d[_0x152ef2(0x15a)](_0x33de56);},setupFooterContainer=()=>{const _0x314d63=_0x369bcd,_0xf9d9f1=document[_0x314d63(0x156)]('.footer');if(!_0xf9d9f1)return null;const _0x16fd5b=createElement('div',{'class':'mio-footer-container'});return _0xf9d9f1['replaceWith'](_0x16fd5b),_0x16fd5b;},loadFooterData=()=>{const _0x488cf6=_0x369bcd;try{const _0x511198=document[_0x488cf6(0x156)]('#footer-data');return _0x511198?JSON[_0x488cf6(0x148)](_0x511198['textContent']):null;}catch(_0x3fcd2f){return console[_0x488cf6(0x166)](_0x488cf6(0x165),_0x3fcd2f),null;}},initialize=()=>{const _0x465177=_0x369bcd;styleManager[_0x465177(0x146)]();let _0x199c0d=0x0;const _0x2d7c9e=()=>{const _0x235380=_0x465177;if(_0x199c0d++>MAX_RETRY)return;const _0x29099d=loadFooterData();if(!_0x29099d)return;if(!document[_0x235380(0x156)](_0x235380(0x167))){if(!setupFooterContainer())return;}renderFooter(_0x29099d),footer=!![];},_0x2f8911=new MutationObserver(_0x2d7c9e);_0x2f8911[_0x465177(0x155)](document['body'],{'childList':!![],'subtree':!![]}),_0x2d7c9e();const _0x1fc112=setInterval(()=>{const _0x3d01f8=_0x465177;footer||_0x199c0d>MAX_RETRY?(clearInterval(_0x1fc112),_0x2f8911[_0x3d01f8(0x171)]()):_0x2d7c9e();},RETRY_INTERVAL);};document['readyState']===_0x369bcd(0x14e)?initialize():window['addEventListener'](_0x369bcd(0x168),initialize);let isConsoleOpen=![];setInterval(()=>{const _0x12c981=_0x369bcd,_0x3cca19=0xa0;window[_0x12c981(0x15c)]-window['innerHeight']>_0x3cca19||window['outerWidth']-window[_0x12c981(0x142)]>_0x3cca19?!isConsoleOpen&&(fakeError(),isConsoleOpen=!![]):isConsoleOpen=![];},0x1f4);function _0x3b51(_0x1e8066,_0x121090){const _0x44aa03=_0x44aa();return _0x3b51=function(_0x3b511b,_0x24bdf4){_0x3b511b=_0x3b511b-0x13d;let _0x583814=_0x44aa03[_0x3b511b];return _0x583814;},_0x3b51(_0x1e8066,_0x121090);}function fakeError(){const _0x33fe1a=_0x369bcd;console[_0x33fe1a(0x145)](),console[_0x33fe1a(0x166)]('%c🚨\x20SECURITY\x20ALERT\x20(Code:\x200x8F4A2E)',_0x33fe1a(0x169)),console[_0x33fe1a(0x166)]('%c⚠️\x20Unauthorized\x20DevTools\x20access\x20detected.\x0aThis\x20page\x20is\x20protected\x20by\x20Quantum\x20CSS\x20Encryption™.\x0a\x0aTo\x20continue,\x20please\x20close\x20DevTools\x20and\x20refresh\x20the\x20page.',_0x33fe1a(0x13f)),console[_0x33fe1a(0x15b)](_0x33fe1a(0x13e),_0x33fe1a(0x15e)),console[_0x33fe1a(0x16b)](_0x33fe1a(0x157)),console['log'](_0x33fe1a(0x15f)),console[_0x33fe1a(0x16b)](_0x33fe1a(0x16e)),console[_0x33fe1a(0x14f)]();}
+/*
+ * @Author: kasuie
+ * @Date: 2024-04-24 15:35:59
+ * @LastEditors: kasuie
+ * @LastEditTime: 2024-11-05 09:38:54
+ * @Description:
+ */
+let footer = false;
+const MAX_RETRY = 15; // 最大重试次数增加到15次
+const RETRY_INTERVAL = 200; // 检测间隔缩短到200ms
+
+const footerStyle = `
+  .mio-footer-container {
+    --text-color: rgb(var(--mio-text));
+    --hover-color: rgba(var(--mio-primary));
+    
+    width: 100%;
+    padding: 1rem 0;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+  
+  .mio-footer-container:hover {
+    opacity: 1;
+  }
+
+  .mio-footer-content {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-color);
+  }
+
+  .mio-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s ease;
+  }
+
+  .mio-footer-link:hover {
+    color: var(--hover-color);
+    text-decoration: underline;
+  }
+
+  .mio-footer-divider {
+    color: rgba(var(--mio-text), 0.4);
+    user-select: none;
+  }
+
+  .mio-footer-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 4px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+
+  .mio-footer-link:hover .mio-footer-icon {
+    transform: scale(1.1);
+  }
+`;
+
+const styleManager = {
+  styleElement: null,
+  inject() {
+    if (!this.styleElement) {
+      this.styleElement = document.createElement("style");
+      this.styleElement.textContent = footerStyle;
+      document.head.appendChild(this.styleElement);
+    }
+  },
+  remove() {
+    if (this.styleElement) {
+      this.styleElement.remove();
+      this.styleElement = null;
+    }
+  }
+};
+
+const createElement = (tag, attrs = {}, children = []) => {
+  const element = document.createElement(tag);
+  Object.entries(attrs).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      element.setAttribute(key, value);
+    }
+  });
+  children.forEach(child => element.appendChild(child));
+  return element;
+};
+
+const renderFooter = (data) => {
+  const container = document.querySelector(".mio-footer-container");
+  if (!container) return;
+
+  const contentFragment = document.createDocumentFragment();
+  
+  data.forEach((item, index) => {
+    if (index > 0) {
+      contentFragment.appendChild(
+        createElement("span", { class: "mio-footer-divider" }, [document.createTextNode("|")])
+      );
+    }
+
+    const link = createElement("a", { 
+      class: "mio-footer-link",
+      href: item.url,
+      target: item.target || "_blank",
+      rel: "noopener noreferrer"
+    });
+
+    if (item.icon) {
+      const icon = createElement("img", {
+        class: "mio-footer-icon",
+        src: `https://api.remio.cc/icon/${new URL(item.url).host}.ico`,
+        alt: `${item.text} icon`,
+        loading: "lazy"
+      });
+      link.appendChild(icon);
+    }
+
+    link.appendChild(document.createTextNode(item.text));
+    contentFragment.appendChild(link);
+  });
+
+  const contentWrapper = createElement("div", { class: "mio-footer-content" }, [contentFragment]);
+  container.innerHTML = "";
+  container.appendChild(contentWrapper);
+};
+
+const setupFooterContainer = () => {
+  const existingFooter = document.querySelector(".footer");
+  if (!existingFooter) return null;
+
+  const container = createElement("div", { class: "mio-footer-container" });
+  existingFooter.replaceWith(container);
+  return container;
+};
+
+const loadFooterData = () => {
+  try {
+    const dataElement = document.querySelector("#footer-data");
+    return dataElement ? JSON.parse(dataElement.textContent) : null;
+  } catch (error) {
+    console.error("Footer data parsing failed:", error);
+    return null;
+  }
+};
+
+const initialize = () => {
+  styleManager.inject();
+  
+  let retryCount = 0;
+  const initialization = () => {
+    if (retryCount++ > MAX_RETRY) return;
+
+    const footerData = loadFooterData();
+    if (!footerData) return;
+
+    if (!document.querySelector(".mio-footer-container")) {
+      if (!setupFooterContainer()) return;
+    }
+
+    renderFooter(footerData);
+    footer = true;
+  };
+
+  const observer = new MutationObserver(initialization);
+  observer.observe(document.body, { 
+    childList: true,
+    subtree: true
+  });
+
+  initialization(); // 立即尝试初始化
+  const retryTimer = setInterval(() => {
+    if (footer || retryCount > MAX_RETRY) {
+      clearInterval(retryTimer);
+      observer.disconnect();
+    } else {
+      initialization();
+    }
+  }, RETRY_INTERVAL);
+};
+
+// 安全启动
+if (document.readyState === "complete") {
+  initialize();
+} else {
+  window.addEventListener("DOMContentLoaded", initialize);
+}
+
+// 监听控制台打开（检测窗口大小变化）
+let isConsoleOpen = false;
+setInterval(() => {
+  const threshold = 160; // 控制台打开时窗口高度变化阈值
+  if (window.outerHeight - window.innerHeight > threshold || window.outerWidth - window.innerWidth > threshold) {
+    if (!isConsoleOpen) {
+      fakeError(); // 触发假报错
+      isConsoleOpen = true;
+    }
+  } else {
+    isConsoleOpen = false;
+  }
+}, 500);
+
+// 伪造一个看起来超专业的错误
+function fakeError() {
+  console.clear(); // 先清空控制台
+  
+  // 1. 输出假错误（带格式）
+  console.error(
+    "%c🚨 SECURITY ALERT (Code: 0x8F4A2E)",
+    "font-size: 16px; color: red; font-weight: bold;"
+  );
+  console.error(
+    "%c⚠️ Unauthorized DevTools access detected.\nThis page is protected by Quantum CSS Encryption™.\n\nTo continue, please close DevTools and refresh the page.",
+    "font-size: 14px; color: orange; line-height: 1.5;"
+  );
+  
+  // 2. 伪造堆栈跟踪（看起来超真实）
+  console.groupCollapsed("%c🔍 Stack Trace", "color: gray;");
+  console.log("at encryptedCSS (webpack:///secure/module.js:42:13)");
+  console.log("at QuantumRenderer._compile (webpack:///core/quantum.js:88:21)");
+  console.log("at <anonymous>:1:11");
+  console.groupEnd();
+  
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  const bodyElement = document.querySelector('body'); // 修改这里以匹配你页面的实际结构
+  if (!bodyElement) return; // 如果没有找到指定的元素，则退出
+
+  const isMobile = window.outerWidth <= 960; // 根据屏幕宽度判断是否为移动设备
+  const maxImages = 150;
+  const randomImageIndex = Math.floor(Math.random() * maxImages) + 1; // 生成1到150之间的随机数
+
+  let imageUrl;
+  if (isMobile) {
+      imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile/mobile_${randomImageIndex}.jpg`;
+  } else {
+      imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop/desktop_${randomImageIndex}.jpg`;
+  }
+
+  bodyElement.style.backgroundImage = `url(${imageUrl})`; // 设置背景图片
+});
