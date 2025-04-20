@@ -230,21 +230,26 @@ function fakeError() {
   
 }
 
-
 document.addEventListener("DOMContentLoaded", function() {
-  const bodyElement = document.querySelector('body'); // 修改这里以匹配你页面的实际结构
-  if (!bodyElement) return; // 如果没有找到指定的元素，则退出
+    // 获取body元素
+    const bodyElement = document.querySelector('body');
+    if (!bodyElement) return; // 如果没有找到指定的元素，则退出
 
-  const isMobile = window.outerWidth <= 960; // 根据屏幕宽度判断是否为移动设备
-  const maxImages = 150;
-  const randomImageIndex = Math.floor(Math.random() * maxImages) + 1; // 生成1到150之间的随机数
+    // 判断是否为移动设备（屏幕宽度小于等于960px）
+    const isMobile = window.outerWidth <= 960;
 
-  let imageUrl;
-  if (isMobile) {
-      imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile/mobile_${randomImageIndex}.jpg`;
-  } else {
-      imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop/desktop_${randomImageIndex}.jpg`;
-  }
+    // 随机生成图片索引（范围为1到150）
+    const maxImages = 150;
+    const randomImageIndex = Math.floor(Math.random() * maxImages) + 1;
 
-  bodyElement.style.backgroundImage = `url(${imageUrl})`; // 设置背景图片
+    // 根据设备类型选择图片路径
+    let imageUrl;
+    if (isMobile) {
+        imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile/mobile_${randomImageIndex}.jpg`;
+    } else {
+        imageUrl = `https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop/desktop_${randomImageIndex}.jpg`;
+    }
+
+    // 设置背景图片
+    bodyElement.style.setProperty('--dynamic-bg', `url(${imageUrl})`);
 });
