@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机图片 - 电脑端</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+  <script>
+    // 随机生成电脑端图片路径并设置到 img 标签
+    (function () {
+      const desktopBaseURL = "https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/desktop";
+      const totalImages = 150;
+
+      // 随机生成图片编号
+      const randomIndex = Math.floor(Math.random() * totalImages) + 1;
+      const imageURL = `${desktopBaseURL}/desktop_${randomIndex}.jpg`;
+
+      // 设置图片的 src 属性
+      document.addEventListener("DOMContentLoaded", () => {
+        const img = document.getElementById("random-image");
+        img.src = imageURL;
+      });
+    })();
+  </script>
+</head>
+<body>
+  <img id="random-image" alt="随机图片 - 电脑端">
+</body>
+</html>
