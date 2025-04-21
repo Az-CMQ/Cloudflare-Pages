@@ -55,7 +55,9 @@
   @font-face {
     /* 自定义字体Yozai */
     font-family: "Yozai";
-    src: url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");
+    src: url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
+            /*/https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf*/
+
     font-display: swap;
     font-weight: 400;
     font-style: normal
@@ -83,7 +85,7 @@
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-desktop.html);
+    background-image: url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-desktop.html);
     z-index: 0
   }
 
@@ -91,7 +93,7 @@
   @media screen and (max-width: 960px) {
     body::before {
         /* 小屏幕设备上的背景图片 */
-        background-image:url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-mobile.html)
+        background-image:url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/random-image-mobile.html)
     }
   }
   
