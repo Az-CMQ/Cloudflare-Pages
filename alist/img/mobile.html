@@ -1,0 +1,10 @@
+<script>
+    const maxImages = 150; 
+    const randomImageIndex = Math.floor(Math.random() * maxImages) + 1; 
+    const imagePath = `mobile/mobile_${randomImageIndex}.webp`; 
+
+    const imgElement = document.createElement('img');
+    imgElement.src = imagePath;
+
+    document.write(imgElement.outerHTML);
+</script>
