@@ -55,9 +55,7 @@
   @font-face {
     /* 自定义字体Yozai */
     font-family: "Yozai";
-    src: url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
-            /*/https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf*/
-
+    src: url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");
     font-display: swap;
     font-weight: 400;
     font-style: normal
@@ -85,24 +83,25 @@
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    z-index: 0;
+    background-image: url(https://kasuie.cc/api/img/bg?size=regular);
+    z-index: 0
   }
-
+  
   @media screen and (max-width: 960px) {
     body::before {
-        /* 使用动态背景变量 */
-        background-image: var(--dynamic-bg);
+        /* 小屏幕设备上的背景图片 */
+        background-image:url(https://kasuie.cc/api/img/bg?type=mobile&size=regular)
     }
   }
   
   body.hope-ui-light::before {
     /* 浅色主题下的背景模糊效果 */
-    filter: blur(3px) brightness(.8);
+    filter: blur(3px) brightness(.8)
   }
   
   body.hope-ui-dark::before {
     /* 深色主题下的背景模糊效果 */
-    filter: blur(3px) brightness(.4);
+    filter: blur(3px) brightness(.4)
   }
   
   div#root {
@@ -375,3 +374,4 @@
     /* 特定元素背景颜色 */
     background-color: rgba(255, 255, 255, 0.5)!important;
   }
+  
