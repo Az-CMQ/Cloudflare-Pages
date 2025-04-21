@@ -186,11 +186,35 @@ const initialize = () => {
   }, RETRY_INTERVAL);
 };
 
+// 动态加载随机背景图片
+const loadRandomBackground = async () => {
+  try {
+    const response = await fetch("https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/img/mobile.html");
+    const html = await response.text();
+
+    // 创建一个临时 DOM 来解析 HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // 从 HTML 中提取随机图片 URL
+    const imgElement = doc.querySelector("img");
+    if (imgElement && imgElement.src) {
+      document.body.style.setProperty("--dynamic-bg", `url(${imgElement.src})`);
+    }
+  } catch (error) {
+    console.error("加载随机背景图片失败:", error);
+  }
+};
+
 // 安全启动
 if (document.readyState === "complete") {
   initialize();
+  loadRandomBackground();
 } else {
-  window.addEventListener("DOMContentLoaded", initialize);
+  window.addEventListener("DOMContentLoaded", () => {
+    initialize();
+    loadRandomBackground();
+  });
 }
 
 // 监听控制台打开（检测窗口大小变化）
@@ -229,3 +253,4 @@ function fakeError() {
   console.groupEnd();
   
 }
+
