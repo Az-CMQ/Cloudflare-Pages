@@ -82,7 +82,7 @@ body::before {
     width: 100vw;
     height: 100vh;
     background-position: center;
-    background-attachment: scroll; /* 删除 fixed */
+    background-attachment: fixed; /* 修正拼写错误 */
     background-size: cover;
     background-repeat: no-repeat;
     z-index: -1; /* 调整层级确保内容在前 */
