@@ -55,7 +55,9 @@
   @font-face {
     /* 自定义字体Yozai */
     font-family: "Yozai";
-    src: url(https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");
+    src: url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
+            /*/https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf*/
+
     font-display: swap;
     font-weight: 400;
     font-style: normal
@@ -71,8 +73,8 @@
     font-family: inherit!important
   }
   
-  body::before {
-    /* 添加背景图片效果 */
+/* 保留原有结构，移除写死的背景图片URL */
+body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -80,19 +82,18 @@
     width: 100vw;
     height: 100vh;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll; /* 删除 fixed */
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(https://kasuie.cc/api/img/bg?size=regular);
-    z-index: 0
-  }
-  
-  @media screen and (max-width: 960px) {
+    z-index: -1; /* 调整层级确保内容在前 */
+}
+
+@media screen and (max-width: 960px) {
     body::before {
-        /* 小屏幕设备上的背景图片 */
-        background-image:url(https://kasuie.cc/api/img/bg?type=mobile&size=regular)
+        /* 仅保留移动端特定样式 */
+        z-index: -1;
     }
-  }
+}
   
   body.hope-ui-light::before {
     /* 浅色主题下的背景模糊效果 */
