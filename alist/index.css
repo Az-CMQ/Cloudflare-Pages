@@ -55,7 +55,7 @@
   @font-face {
     /* 自定义字体Yozai */
     font-family: "Yozai";
-    src: url(https://quantil.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
+    src: url(https://cdn.mengze.vip/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
             /*/https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf*/
 
     font-display: swap;
