@@ -1,12 +1,4 @@
-
-
-/**
- * Failed to minify the file using clean-css v5.3.3. Serving the original version.
- * Original file: /gh/kasuie/alist-customize@main/v3/css/index.css
- *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
- */
- :root {
+:root {
     --mio-main: 255, 255, 255;
     --mio-text: 0, 0, 0;
     --mio-primary: 100, 209, 226; /* 主题色 #64d1e2 偏蓝 */
@@ -29,10 +21,8 @@
   }
   
   @font-face {
-    /* 自定义字体Yozai */
     font-family: "Yozai";
-    src: url(https://cdn.mengze.vip/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf)format("woff2");   
-            /*/https://cdn.jsdelivr.net/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf*/
+    src: url("../font/Yozai-Regular.ttf") format("truetype");
   }
   
   @font-face {
@@ -49,18 +39,18 @@
     width: 100vw;
     height: 100vh;
     background-position: center;
-    background-attachment: fixed; /* 修正拼写错误 */
+    background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    z-index: -1; /* 调整层级确保内容在前 */
-}
-
-@media screen and (max-width: 960px) {
+    background-image: url(https://kasuie.cc/api/img/bg?size=regular); /* 背景图片，可自行替换 */
+    z-index: 0;
+  }
+  
+  @media screen and (max-width: 960px) {
     body::before {
-        /* 仅保留移动端特定样式 */
-        z-index: -1;
+      background-image: url(https://kasuie.cc/api/img/bg?type=mobile&size=regular); /* 竖屏背景图片，可自行替换 */
     }
-}
+  }
   
   /**白天背景稍亮*/
   body.hope-ui-light::before {
@@ -334,4 +324,3 @@
   div.hope-c-PJLV-ibcBsNO-css div.hope-c-PJLV-idKXllh-css a {
     display: none;
   }
-  
