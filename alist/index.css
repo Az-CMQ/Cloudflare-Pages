@@ -28,14 +28,10 @@
   
   @font-face {
     font-family: "Yozai";
-    src: url("../font/Yozai-Regular.ttf") format("truetype");
+    src: url("https://cdn.mengze.vip/gh/Cyber-HuaTuo/Cloudflare-Pages/alist/index.ttf") format("truetype");
   }
   
-  @font-face {
-    font-family: "HYTMR";
-    src: url("https://npm.elemecdn.com/fontcdn-ariasaka@1.0.0/HYTangMeiRen55W.woff2") format("woff2");
-  }
-  
+
   /** 背景 */
   body::before {
     content: "";
