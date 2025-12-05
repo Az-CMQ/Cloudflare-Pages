@@ -3,153 +3,1357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>月</title>
+    <title>Saturn C60 x Gemini</title>
     <style>
-        :root {
-            --bili-pink: #FB7299;
-            --accent-blue: #00A1D6;
-            --cubic-bezier: cubic-bezier(0.4, 0, 0.2, 1);
+        /* ================= 基础重置 ================= */
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Roboto', 'Helvetica Neue', sans-serif; user-select: none; }
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        /* ================= 3D 场景 HUD ================= */
+        #ui-layer {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: flex; gap: 20px; align-items: center; pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .hud-text {
+            color: rgba(255, 255, 255, 0.7); font-size: 12px; font-weight: 500; letter-spacing: 1px;
+            background: rgba(30, 31, 32, 0.8); padding: 8px 16px; border-radius: 20px;
+            backdrop-filter: blur(5px);
+            min-width: 280px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        body {
-            font-family: 'Segoe UI', system-ui;
-            background: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+        button.hud-btn {
+            pointer-events: auto; background: rgba(30, 31, 32, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e3e3e3; padding: 8px 20px; font-size: 12px; cursor: pointer; border-radius: 20px;
+            transition: all 0.2s ease; min-width: 100px; font-family: inherit;
+        }
+        
+        button.hud-btn:hover { background: #333; color: #fff; }
+        
+        /* ================= Gemini 风格界面 ================= */
+        #gemini-interface {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 20; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transform: scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            color: #E3E3E3;
         }
 
-        /* 头像容器 */
-        .avatar-container {
+        #gemini-interface.active {
+            opacity: 1; pointer-events: auto; transform: scale(1);
+        }
+
+        /* 主聊天区域 */
+        .main-area {
+            width: 100%; max-width: 700px; height: 85vh; 
+            display: flex; flex-direction: column; align-items: center;
             position: relative;
-            margin-bottom: 2rem;
-            cursor: pointer;
+            background: rgba(30, 31, 32, 0.2);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
 
-        /* 头像样式 */
+        /* 顶部导航 */
+        .top-bar {
+            width: 100%; height: 50px; display: flex; justify-content: flex-end; align-items: center;
+            padding: 0 15px; box-sizing: border-box;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            gap: 10px;
+        }
+        
+        .icon-btn {
+            background: transparent; border: none; color: #8E9196; cursor: pointer; padding: 8px; border-radius: 50%;
+            transition: color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:hover { background-color: #3C4043; color: #fff; }
+
+        /* 聊天记录容器 */
+        #chat-container {
+            flex: 1; width: 100%; 
+            overflow-y: auto; padding: 20px 30px; box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 24px;
+            scrollbar-width: thin; scrollbar-color: #444 transparent;
+        }
+
+        /* 消息气泡 */
+        .message { display: flex; gap: 16px; line-height: 1.6; font-size: 15px; }
+        .message.user { flex-direction: row-reverse; }
+        
         .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s var(--cubic-bezier);
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .avatar.gemini-icon { background: transparent; }
+        .avatar.user-icon { background-color: #444746; color: #fff; font-size: 14px; }
+
+        .msg-content { max-width: 85%; }
+        .user .msg-content { background-color: #282A2C; padding: 12px 20px; border-radius: 20px 4px 20px 20px; }
+        .ai .msg-content { padding-top: 4px; }
+
+        /* 聊天记录中的图片 */
+        .chat-image {
+            max-width: 100%; border-radius: 12px; margin-bottom: 8px;
+            display: block; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* 点击动画 */
-        .avatar:active {
-            transform: scale(0.95);
+        /* ================= 优化后的输入区域 =================
+           修改说明：
+           1. display: flex + justify-content: center 强制水平居中
+           2. padding 保持 20px 30px 30px 30px，维持你想要的上下间距
+        */
+        .input-wrapper {
+            width: 100%; 
+            padding: 20px 30px 30px 30px; 
+            box-sizing: border-box;
+            background: transparent;
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; /* 底部对齐 */
         }
 
-        /* 点击后出现的特效 */
-        .avatar-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle, 
-                rgba(251,114,153,0.3) 0%, 
-                rgba(251,114,153,0) 70%
-            );
-            opacity: 0;
-            pointer-events: none;
+        /* 图片预览区域 */
+        .preview-hidden { display: none !important; }
+        
+        #preview-area {
+            width: 100%; display: flex; justify-content: flex-start;
+            padding-bottom: 10px; padding-left: 10px;
         }
 
-        /* 点击时的动画 */
-        @keyframes avatarClick {
-            0% { transform: scale(0); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
+        .preview-box {
+            position: relative; width: 60px; height: 60px;
+            background: #333; border-radius: 8px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* 内容卡片 */
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
+        #img-preview { width: 100%; height: 100%; object-fit: cover; }
+
+        #clear-img {
+            position: absolute; top: 0; right: 0;
+            background: rgba(0,0,0,0.6); color: #fff; border: none;
+            width: 20px; height: 20px; cursor: pointer;
+            font-size: 14px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .input-bar {
+            width: 100%; /* 占满容器 */
+            background-color: #1E1F20; 
+            border-radius: 999px;
+            display: flex; align-items: center; padding: 8px 10px 8px 20px;
+            gap: 10px; transition: background-color 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .input-bar:focus-within { background-color: #282A2C; border-color: rgba(255,255,255,0.2); }
+
+        .add-btn {
+            width: 32px; height: 32px; border-radius: 50%; border: none; background: #282A2C; color: #E3E3E3;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .add-btn:hover { background: #3C4043; }
+
+        #user-input {
+            flex: 1; background: transparent; border: none; color: #E3E3E3;
+            font-size: 16px; outline: none; padding: 8px 0; font-family: inherit;
+        }
+
+        .send-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; 
+            color: #E3E3E3; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .send-btn:hover { background: #333; }
+        .send-btn svg { fill: currentColor; width: 24px; height: 24px; }
+        
+        .ui-hidden { opacity: 0 !important; pointer-events: none !important; }
+
+        .gemini-gradient-text {
+            background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 500;
+        }
+
+        .cursor::after { content: '|'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* ================= 设置面板 ================= */
+        #settings-panel {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(30, 31, 32, 0.95);
+            z-index: 50;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        #settings-panel.active { opacity: 1; pointer-events: auto; }
+        
+        .settings-content {
+            width: 80%; max-width: 400px;
+            display: flex; flex-direction: column; gap: 20px;
             text-align: center;
         }
 
-        /* 社交链接 */
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1.5rem;
+        .settings-title { font-size: 20px; font-weight: bold; color: #fff; margin-bottom: 10px; }
+        
+        .api-input {
+            width: 100%; padding: 12px; border-radius: 8px;
+            background: #121212; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; font-family: inherit; font-size: 14px;
+            outline: none; box-sizing: border-box;
+        }
+        .api-input:focus { border-color: #4285f4; }
+        
+        .save-btn {
+            padding: 10px 24px; border-radius: 20px; border: none;
+            background: linear-gradient(90deg, #4285f4, #9b72cb);
+            color: white; font-weight: bold; cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .save-btn:active { transform: scale(0.98); }
+
+        .close-settings {
+            position: absolute; top: 20px; right: 20px;
+            background: transparent; border: none; color: #888; cursor: pointer;
         }
 
-        .social-link {
-            color: var(--bili-pink);
-            font-size: 1.5rem;
-            transition: transform 0.3s;
-        }
-
-        .social-link:hover {
-            transform: translateY(-3px);
-        }
     </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="avatar-container" id="avatarContainer">
-        <img src="img/avatar.jpg" class="avatar" alt="月">
-        <div class="avatar-effect" id="avatarEffect"></div>
+
+    <div id="canvas-container"></div>
+    
+    <div id="ui-layer">
+        <div class="hud-text" id="status-text">SYSTEM READY // CLICK CORE TO CHAT</div>
+        <button class="hud-btn" id="btn-fs">FULLSCREEN</button>
+        <button class="hud-btn" id="btn-cam">SENSOR: OFF</button>
     </div>
 
-    <div class="card">
-        <h1>月</h1>
-        <p>🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️🈷️</p>
-        
-        <div class="social-links">
-            <a href="https://youtube.com/watch?v=dQw4w9WgXcQ&source_ve_path=MTc4NDI0"
-                class="social-link" target="_blank">月</a>
+    <div id="gemini-interface">
+        <div class="main-area">
+            <!-- 设置面板 -->
+            <div id="settings-panel">
+                <button class="close-settings" id="close-settings-btn">✕</button>
+                <div class="settings-content">
+                    <div class="settings-title gemini-gradient-text">Configuration</div>
+                    <p style="font-size: 13px; color: #aaa; margin: 0;">Enter your Gemini API Key. It will be stored locally.</p>
+                    <input type="password" id="api-key-input" class="api-input" placeholder="Paste API Key here (starts with AIza...)" />
+                    <button class="save-btn" id="save-key-btn">Save Configuration</button>
+                </div>
+            </div>
+
+            <div class="top-bar">
+                <div style="flex:1"></div> 
+                <button class="icon-btn" id="open-settings-btn" title="API Settings">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                </button>
+                <button class="icon-btn" id="close-chat">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+
+            <div id="chat-container">
+                <div class="message ai">
+                    <div class="avatar gemini-icon">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="url(#gemini-grad)" d="M12,22 C12,17 8,12 2,12 C8,12 12,8 12,2 C12,8 17,12 22,12 C17,12 12,17 12,22 Z"/></svg>
+                        <defs><linearGradient id="gemini-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4285f4;stop-opacity:1" /><stop offset="50%" style="stop-color:#9b72cb;stop-opacity:1" /><stop offset="100%" style="stop-color:#d96570;stop-opacity:1" /></linearGradient></defs>
+                    </div>
+                    <div class="msg-content">
+                        <span class="gemini-gradient-text">Hello, I am Gemini.</span><br>
+                        I am a large language model. How can I help you to solve problems today?
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <!-- 图片预览区域 -->
+                <div id="preview-area" class="preview-hidden">
+                    <div class="preview-box">
+                        <img id="img-preview" src="" />
+                        <button id="clear-img">×</button>
+                    </div>
+                </div>
+
+                <div class="input-bar">
+                    <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+                    <button class="add-btn" id="upload-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </button>
+                    <input type="text" id="user-input" placeholder="Enter a prompt here" autocomplete="off">
+                    <button class="send-btn" id="send-msg">
+                        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        const avatar = document.getElementById('avatarContainer');
-        const effect = document.getElementById('avatarEffect');
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-        // 点击头像时的动画
-        avatar.addEventListener('click', function() {
-            // 创建涟漪效果
-            const ripple = document.createElement('div');
-            ripple.className = 'avatar-effect';
-            ripple.style.animation = 'avatarClick 0.6s var(--cubic-bezier) forwards';
-            this.appendChild(ripple);
-            
-            // 动画结束后移除元素
-            ripple.addEventListener('animationend', () => {
-                ripple.remove();
-            });
-            
-            // 头像弹跳效果
-            this.querySelector('.avatar').style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.querySelector('.avatar').style.transform = 'scale(1)';
-            }, 300);
-            
-            // 可以在这里添加其他交互逻辑
-            console.log('月');
-        });
+        // =========================================================
+        // 1. CONFIGURATION & UTILS
+        // =========================================================
+        const Config = {
+            PARTICLES: 500000,
+            CORE_RADIUS: 5.0, 
+            INNER_RADIUS: 3.0, 
+            RING_INNER: 8.0,
+            RING_OUTER: 28.0,
+            REPEL_RADIUS: 4.5,
+            REPEL_STRENGTH: 2.0,
+            DENSITY_EXP: 1.7,
+            COLORS: {
+                INNER: new THREE.Color(0.95, 0.85, 0.7), 
+                MID:   new THREE.Color(0.7, 0.6, 0.5),
+                OUTER: new THREE.Color(0.4, 0.5, 0.7)
+            }
+        };
 
-        // 也可以添加鼠标悬停效果
-        avatar.addEventListener('mouseenter', function() {
-            this.querySelector('.avatar').style.boxShadow = '0 8px 25px rgba(251,114,153,0.3)';
-        });
+        const Utils = {
+            createNoiseTexture: () => {
+                const size = 256;
+                const data = new Uint8Array(size * size * 4);
+                for (let i = 0; i < data.length; i += 4) {
+                    const val = Math.floor(Math.random() * 255);
+                    data[i] = val; data[i+1] = val; data[i+2] = val; data[i+3] = 255;
+                }
+                const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+                texture.wrapS = THREE.RepeatWrapping; 
+                texture.wrapT = THREE.RepeatWrapping; 
+                texture.needsUpdate = true;
+                return texture;
+            }
+        };
+
+        // =========================================================
+        // 2. SHADER LIBRARY
+        // =========================================================
+        const ShaderLib = {
+            Ring: {
+                vertex: `
+                    uniform float uTime;
+                    uniform float uScale;
+                    uniform vec3 uMousePos;
+                    uniform bool uMouseActive;
+                    attribute float aAngle;
+                    attribute float aRadius;
+                    attribute float aSpeed;
+                    attribute float aVerticality; 
+                    varying float vAlpha;
+                    varying float vRadius; 
+                    varying vec2 vUv; 
+                    varying float vIsHalo; 
+                    
+                    #define RING_INNER ${Config.RING_INNER.toFixed(1)}
+                    #define RING_OUTER ${Config.RING_OUTER.toFixed(1)}
+                    #define REPEL_RADIUS ${Config.REPEL_RADIUS.toFixed(1)}
+                    #define REPEL_STRENGTH ${Config.REPEL_STRENGTH.toFixed(1)}
+
+                    vec3 calculateRepulsion(vec3 currentPos, vec3 targetPos, float angle, float radius) {
+                        float dist = distance(currentPos, targetPos);
+                        if (dist < REPEL_RADIUS) {
+                            float force = smoothstep(REPEL_RADIUS, 0.0, dist);
+                            force = pow(force, 2.0); 
+                            vec3 dir = normalize(currentPos - targetPos);
+                            float verticalBias = sin(angle * 12.0 + radius * 3.0);
+                            dir.y += verticalBias * 3.0; 
+                            dir = normalize(dir); 
+                            return dir * force * REPEL_STRENGTH;
+                        }
+                        return vec3(0.0);
+                    }
+
+                    void main() {
+                        vRadius = aRadius;
+                        vUv = vec2(aAngle / 6.28318, (aRadius - RING_INNER) / (RING_OUTER - RING_INNER));
+                        vUv.x -= uTime * aSpeed * 0.02; 
+                        
+                        float currentAngle = aAngle + aSpeed * uTime * 0.5;
+                        float yBase = sin(currentAngle) * aRadius * 0.05;
+                        float isHaloParticle = step(0.5, abs(aVerticality));
+                        
+                        float yRing = yBase + aVerticality;
+                        float flowSpeed = 0.8; 
+                        float phaseOffset = aAngle * 4.0 + aRadius * 0.5;
+                        float yHalo = sin(uTime * flowSpeed + phaseOffset) * aVerticality;
+                        float yFinal = mix(yRing, yHalo, isHaloParticle);
+
+                        vec3 pos = vec3(cos(currentAngle) * aRadius, yFinal, sin(currentAngle) * aRadius);
+                        vec3 scaledPos = pos * uScale;
+
+                        vec3 totalDisplacement = vec3(0.0);
+                        if (uMouseActive) {
+                            totalDisplacement += calculateRepulsion(scaledPos, uMousePos, aAngle, aRadius);
+                        }
+                        scaledPos += totalDisplacement;
+
+                        vec4 mvPosition = modelViewMatrix * vec4(scaledPos, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+                        
+                        float sizeFactor = (isHaloParticle > 0.5) ? 1.8 : 2.0;
+                        gl_PointSize = sizeFactor * (10.0 / -mvPosition.z);
+                        vIsHalo = isHaloParticle;
+                        vAlpha = smoothstep(0.0, 2.0, -mvPosition.z) * smoothstep(80.0, 50.0, -mvPosition.z);
+                    }
+                `,
+                fragment: `
+                    uniform float uBrightness;
+                    uniform sampler2D uTexture; 
+                    uniform vec3 uColorInner;
+                    uniform vec3 uColorMid;
+                    uniform vec3 uColorOuter;
+                    varying float vAlpha;
+                    varying float vRadius;
+                    varying vec2 vUv;
+                    varying float vIsHalo; 
+                    #define RING_INNER ${Config.RING_INNER.toFixed(1)}
+                    #define RING_OUTER ${Config.RING_OUTER.toFixed(1)}
+
+                    void main() {
+                        vec2 coord = gl_PointCoord - vec2(0.5);
+                        if (length(coord) > 0.5) discard;
+                        float particleShape = 1.0 - smoothstep(0.4, 0.5, length(coord));
+                        
+                        float rNorm = (vRadius - RING_INNER) / (RING_OUTER - RING_INNER);
+                        vec3 finalColor = mix(uColorInner, uColorMid, smoothstep(0.0, 0.4, rNorm));
+                        finalColor = mix(finalColor, uColorOuter, smoothstep(0.4, 1.0, rNorm));
+                        
+                        float noise = texture2D(uTexture, vUv * vec2(20.0, 0.5)).r; 
+                        if (vIsHalo > 0.5) {
+                            finalColor = mix(finalColor, vec3(0.9, 0.95, 1.0), 0.4); 
+                            finalColor *= (noise * 0.8 + 0.6); 
+                        } else {
+                            float bands = pow(sin(vRadius * 10.0) * 0.5 + 0.5, 3.0); 
+                            float cassini = smoothstep(0.02, 0.0, abs(rNorm - 0.65));
+                            bands *= (1.0 - cassini * 0.95); 
+                            finalColor *= (bands * 0.7 + noise * 0.5 + 0.2); 
+                        }
+                        
+                        float alphaMult = (vIsHalo > 0.5) ? 0.7 : 1.0;
+                        gl_FragColor = vec4(finalColor * uBrightness, particleShape * vAlpha * alphaMult);
+                    }
+                `
+            },
+            MorphCore: {
+                vertex: `
+                    uniform float uTime;
+                    uniform float uScale;
+                    uniform float uRotationSpeed;
+                    uniform float uMorph; 
+                    attribute float aRingAngle; 
+                    varying float vAlpha;
+                    varying float vMorphState;
+
+                    vec3 rotateY(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x*c+v.z*s, v.y, -v.x*s+v.z*c); }
+                    vec3 rotateX(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x, v.y*c-v.z*s, v.y*s+v.z*c); }
+                    vec3 rotateZ(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x*c-v.y*s, v.x*s+v.y*c, v.z); }
+
+                    void main() {
+                        vec3 spherePos = position;
+                        spherePos = rotateY(spherePos, uTime * uRotationSpeed);
+                        spherePos = rotateX(spherePos, uTime * uRotationSpeed * 0.5);
+
+                        float ringRadius = 10.0; 
+                        vec3 ringPos = vec3(cos(aRingAngle) * ringRadius, 0.0, sin(aRingAngle) * ringRadius);
+                        
+                        ringPos = rotateY(ringPos, uTime * 0.5); 
+                        ringPos = rotateZ(ringPos, 2.0);
+                        ringPos = rotateX(ringPos, 0.3);
+
+                        vec3 finalPos = mix(spherePos, ringPos, uMorph);
+                        vec4 mvPosition = modelViewMatrix * vec4(finalPos * uScale, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+                        
+                        gl_PointSize = 4.0 * (10.0 / -mvPosition.z);
+                        vAlpha = 1.0;
+                        vMorphState = uMorph; 
+                    }
+                `,
+                fragmentPoint: `
+                    uniform float uBrightness;
+                    void main() {
+                        if (length(gl_PointCoord - 0.5) > 0.5) discard;
+                        gl_FragColor = vec4(vec3(1.0, 0.9, 0.6) * uBrightness * 5.0, 1.0);
+                    }
+                `,
+                fragmentWire: `
+                    uniform float uBrightness;
+                    varying float vMorphState;
+                    void main() {
+                        float visibility = 1.0 - smoothstep(0.0, 0.8, vMorphState);
+                        if (visibility < 0.01) discard;
+                        gl_FragColor = vec4(vec3(1.0, 0.6, 0.3) * uBrightness, 0.3 * visibility);
+                    }
+                `,
+                fragmentBracelet: `
+                    uniform float uBrightness;
+                    varying float vMorphState;
+                    void main() {
+                        float visibility = smoothstep(0.2, 1.0, vMorphState);
+                        if (visibility < 0.01) discard;
+                        gl_FragColor = vec4(vec3(1.0, 0.5, 0.2) * uBrightness * 2.0, 0.8 * visibility);
+                    }
+                `
+            },
+            InnerCore: {
+                vertex: `
+                    uniform float uTime;
+                    uniform float uScale;
+                    uniform float uRotationSpeed;
+                    uniform float uMorph; 
+                    uniform float uTargetRadius; 
+                    uniform float uCollapse; 
+                    attribute float aRingAngle;
+                    varying float vMorphState;
+
+                    vec3 rotateY(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x*c+v.z*s, v.y, -v.x*s+v.z*c); }
+                    vec3 rotateX(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x, v.y*c-v.z*s, v.y*s+v.z*c); }
+                    vec3 rotateZ(vec3 v, float angle) { float c=cos(angle); float s=sin(angle); return vec3(v.x*c-v.y*s, v.x*s+v.y*c, v.z); }
+
+                    void main() {
+                        vec3 spherePos = rotateY(position, uTime * uRotationSpeed);
+                        spherePos = rotateX(spherePos, uTime * uRotationSpeed * 0.3);
+
+                        vec3 targetPos;
+                        if (uCollapse > 0.5) {
+                            float group = step(3.14159, aRingAngle); 
+                            float phase = group * 3.14159; 
+                            float orbitSpeed = 30.0; 
+                            float orbitRadius = 0.6; 
+                            float starSize = 0.1; 
+                            float t = uTime * orbitSpeed;
+                            vec3 flatOrbit = vec3(cos(t + phase) * orbitRadius, 0.0, sin(t + phase) * orbitRadius);
+                            vec3 orbitCenter = rotateX(flatOrbit, uTime * 0.5);
+                            orbitCenter = rotateZ(orbitCenter, uTime * 0.2);
+                            targetPos = orbitCenter + (spherePos * starSize);
+                        } else {
+                            float r = uTargetRadius;
+                            vec3 ringPos = vec3(cos(aRingAngle) * r, 0.0, sin(aRingAngle) * r);
+                            ringPos = rotateY(ringPos, uTime * 0.5); 
+                            ringPos = rotateZ(ringPos, 0.4);
+                            ringPos = rotateX(ringPos, 0.2);
+                            targetPos = ringPos;
+                        }
+                        vec3 finalPos = mix(spherePos, targetPos, uMorph);
+                        vec4 mvPosition = modelViewMatrix * vec4(finalPos * uScale, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+                        
+                        float sizeBase = 4.0;
+                        if (uCollapse > 0.5) {
+                            sizeBase = mix(4.0, 8.0, uMorph); 
+                        }
+                        gl_PointSize = sizeBase * (10.0 / -mvPosition.z);
+                        vMorphState = uMorph;
+                    }
+                `,
+                fragmentWire: `
+                    uniform float uBrightness;
+                    uniform vec3 uColor;
+                    uniform float uOpacity;
+                    varying float vMorphState;
+                    void main() {
+                        float alpha = uOpacity * (1.0 - vMorphState * 0.8);
+                        if (alpha < 0.01) discard;
+                        gl_FragColor = vec4(uColor * uBrightness, alpha);
+                    }
+                `,
+                fragmentPoint: `
+                    uniform float uBrightness;
+                    uniform vec3 uColor;
+                    uniform float uCollapse; 
+                    uniform float uMorphBoost; 
+                    varying float vMorphState;
+                    void main() {
+                        float dist = length(gl_PointCoord - 0.5);
+                        float glow = smoothstep(0.45, 0.0, dist); 
+                        glow = pow(glow, 2.0); 
+                        vec3 baseColor = uColor;
+                        float alpha = 1.0;
+                        if (uCollapse > 0.5) {
+                            vec3 starColor = vec3(1.0, 0.9, 0.7); 
+                            baseColor = mix(uColor, starColor, vMorphState);
+                            alpha = mix(1.0, 0.2, vMorphState); 
+                        }
+                        float boost = 1.0 + vMorphState * uMorphBoost; 
+                        gl_FragColor = vec4(baseColor * uBrightness * boost, alpha * glow);
+                    }
+                `
+            }
+        };
+
+        // =========================================================
+        // 3. UI MANAGEMENT SYSTEM (Updated with Settings Logic)
+        // =========================================================
         
-        avatar.addEventListener('mouseleave', function() {
-            this.querySelector('.avatar').style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
-        });
+        class ChatManager {
+            constructor() {
+                this.container = document.getElementById('chat-container');
+                this.input = document.getElementById('user-input');
+                this.sendBtn = document.getElementById('send-msg');
+                
+                // 图片上传
+                this.fileInput = document.getElementById('file-input');
+                this.uploadBtn = document.getElementById('upload-btn');
+                this.previewArea = document.getElementById('preview-area');
+                this.imgPreview = document.getElementById('img-preview');
+                this.clearImgBtn = document.getElementById('clear-img');
+
+                // 设置相关
+                this.settingsPanel = document.getElementById('settings-panel');
+                this.apiKeyInput = document.getElementById('api-key-input');
+                this.saveKeyBtn = document.getElementById('save-key-btn');
+                this.openSettingsBtn = document.getElementById('open-settings-btn');
+                this.closeSettingsBtn = document.getElementById('close-settings-btn');
+
+                this.currentImageBase64 = null; 
+                this.currentMimeType = null;
+
+                // 从本地存储加载Key
+                this.apiKey = localStorage.getItem('GEMINI_API_KEY') || "";
+                this.apiKeyInput.value = this.apiKey;
+
+                this.initListeners();
+            }
+
+            initListeners() {
+                this.sendBtn.addEventListener('click', () => this.handleSend());
+                this.input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') this.handleSend();
+                });
+
+                this.uploadBtn.addEventListener('click', () => this.fileInput.click());
+
+                this.fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            this.currentImageBase64 = event.target.result;
+                            this.currentMimeType = file.type;
+                            this.showPreview(this.currentImageBase64);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                this.clearImgBtn.addEventListener('click', () => this.clearImage());
+
+                // Settings Listeners
+                this.openSettingsBtn.addEventListener('click', () => {
+                    this.settingsPanel.classList.add('active');
+                });
+                
+                this.closeSettingsBtn.addEventListener('click', () => {
+                    this.settingsPanel.classList.remove('active');
+                });
+
+                this.saveKeyBtn.addEventListener('click', () => {
+                    const key = this.apiKeyInput.value.trim();
+                    if (key) {
+                        this.apiKey = key;
+                        localStorage.setItem('GEMINI_API_KEY', key);
+                        this.settingsPanel.classList.remove('active');
+                        this.appendSystemMessage("API Key saved securely.");
+                    } else {
+                        alert("Please enter a valid API Key.");
+                    }
+                });
+            }
+
+            showPreview(src) {
+                this.imgPreview.src = src;
+                this.previewArea.classList.remove('preview-hidden');
+            }
+
+            clearImage() {
+                this.fileInput.value = '';
+                this.currentImageBase64 = null;
+                this.currentMimeType = null;
+                this.previewArea.classList.add('preview-hidden');
+            }
+
+            appendSystemMessage(text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message ai';
+                msgDiv.innerHTML = `<div class="msg-content" style="color:#aaa; font-style:italic; font-size:12px;">[SYSTEM] ${text}</div>`;
+                this.container.appendChild(msgDiv);
+                this.container.scrollTop = this.container.scrollHeight;
+            }
+
+            handleSend() {
+                const text = this.input.value.trim();
+                if (!text && !this.currentImageBase64) return;
+
+                // Check API Key
+                if (!this.apiKey) {
+                    this.settingsPanel.classList.add('active');
+                    this.appendSystemMessage("Please configure your Gemini API Key in the settings panel to continue.");
+                    return;
+                }
+                
+                this.appendMessage('user', text, this.currentImageBase64);
+                
+                const payload = { text: text, image: this.currentImageBase64, mimeType: this.currentMimeType };
+
+                this.input.value = '';
+                this.clearImage();
+
+                this.processAIResponse(payload);
+            }
+
+            appendMessage(role, text, imageSrc = null) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${role}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = `avatar ${role === 'user' ? 'user-icon' : 'gemini-icon'}`;
+                if (role === 'user') {
+                    avatar.innerText = 'U';
+                } else {
+                    avatar.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path fill="url(#gemini-grad)" d="M12,22 C12,17 8,12 2,12 C8,12 12,8 12,2 C12,8 17,12 22,12 C17,12 12,17 12,22 Z"/></svg>`;
+                }
+
+                const content = document.createElement('div');
+                content.className = 'msg-content';
+
+                if (imageSrc) {
+                    const img = document.createElement('img');
+                    img.src = imageSrc;
+                    img.className = 'chat-image';
+                    content.appendChild(img);
+                }
+
+                if (text) {
+                    const textNode = document.createElement('div');
+                    textNode.innerText = text;
+                    content.appendChild(textNode);
+                }
+
+                msgDiv.appendChild(avatar);
+                msgDiv.appendChild(content);
+                this.container.appendChild(msgDiv);
+                
+                this.container.scrollTop = this.container.scrollHeight;
+                return content; 
+            }
+
+            async processAIResponse(payload) {
+                let responseText = "";
+                const modelName = payload.image ? "gemini-3-pro-preview" : "gemini-3-pro-preview"; 
+                // Using Flash model for speed/multimodal in this demo context
+
+                try {
+                    const parts = [];
+                    if (payload.text) parts.push({ text: payload.text });
+                    if (payload.image) {
+                        const base64Data = payload.image.split(',')[1];
+                        parts.push({
+                            inline_data: {
+                                mime_type: payload.mimeType || "image/jpeg",
+                                data: base64Data
+                            }
+                        });
+                    }
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${this.apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: parts }] })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        responseText = "API Error: " + data.error.message;
+                        if (data.error.code === 400 && data.error.status === 'INVALID_ARGUMENT') {
+                            responseText += " (Check your API Key)";
+                        }
+                    } else if (data.candidates && data.candidates[0].content) {
+                        responseText = data.candidates[0].content.parts[0].text;
+                    } else {
+                        responseText = "No response from Gemini.";
+                    }
+                } catch (e) {
+                    responseText = "Network Error. Please check console.";
+                    console.error(e);
+                }
+
+                const aiMsgContent = this.appendMessage('ai', ''); 
+                aiMsgContent.innerText = ''; 
+                this.typeWriter(aiMsgContent, responseText);
+            }
+
+            typeWriter(element, text, index = 0) {
+                if (index < text.length) {
+                    element.innerHTML = text.substring(0, index + 1) + '<span class="cursor"></span>';
+                    this.container.scrollTop = this.container.scrollHeight;
+                    // Dynamic speed
+                    const char = text[index];
+                    let delay = 20;
+                    if (char === '.' || char === '?' || char === '!') delay = 50;
+                    setTimeout(() => this.typeWriter(element, text, index + 1), delay); 
+                } else {
+                    element.innerHTML = text; // Remove cursor
+                }
+            }
+        }
+
+        class UIManager {
+            constructor() {
+                this.hudLayer = document.getElementById('ui-layer');
+                this.geminiInterface = document.getElementById('gemini-interface');
+                this.btnClose = document.getElementById('close-chat');
+                this.btnFs = document.getElementById('btn-fs');
+                this.btnCam = document.getElementById('btn-cam');
+                this.statusText = document.getElementById('status-text');
+                
+                this.isPanelOpen = false;
+                this.chatManager = new ChatManager();
+                
+                this.initEvents();
+            }
+
+            initEvents() {
+                this.btnFs.addEventListener('click', () => {
+                    !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
+                });
+
+                this.btnClose.addEventListener('click', () => {
+                    this.closePanel();
+                });
+            }
+
+            openPanel() {
+                if (this.isPanelOpen) return;
+                this.isPanelOpen = true;
+                this.geminiInterface.classList.add('active');
+                this.hudLayer.classList.add('ui-hidden'); 
+            }
+
+            closePanel() {
+                if (!this.isPanelOpen) return;
+                this.isPanelOpen = false;
+                this.geminiInterface.classList.remove('active');
+                this.hudLayer.classList.remove('ui-hidden');
+            }
+
+            updateStatus(text) {
+                this.statusText.innerText = text;
+            }
+
+            updateCamButton(text) {
+                this.btnCam.innerText = text;
+            }
+        }
+
+        // =========================================================
+        // 4. CORE SYSTEMS (LOGIC & RENDER) - Unchanged
+        // =========================================================
+
+        class RenderContext {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                
+                this.scene = new THREE.Scene();
+                this.scene.fog = new THREE.FogExp2(0x000000, 0.015); 
+                this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 0.1, 500);
+                this.camera.position.set(0, 6, 35);
+                this.camera.lookAt(0, 0, 0);
+
+                this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance", stencil: false, depth: false });
+                this.renderer.setSize(this.width, this.height);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.1;
+                this.container.appendChild(this.renderer.domElement);
+
+                const renderPass = new RenderPass(this.scene, this.camera);
+                const bloomPass = new UnrealBloomPass(new THREE.Vector2(this.width, this.height), 0.5, 0.3, 0.85);
+                const outputPass = new OutputPass();
+                this.composer = new EffectComposer(this.renderer);
+                this.composer.addPass(renderPass);
+                this.composer.addPass(bloomPass);
+                this.composer.addPass(outputPass);
+
+                window.addEventListener('resize', this.onResize.bind(this));
+            }
+
+            onResize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.camera.aspect = this.width / this.height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(this.width, this.height);
+                this.composer.setSize(this.width, this.height);
+            }
+
+            render() {
+                this.composer.render();
+            }
+        }
+
+        class RingSystem {
+            constructor(scene, sharedUniforms) {
+                this.mesh = this.createParticles(sharedUniforms);
+                scene.add(this.mesh);
+            }
+
+            createParticles(uniforms) {
+                const geo = new THREE.BufferGeometry();
+                const pos = new Float32Array(Config.PARTICLES * 3);
+                const angles = new Float32Array(Config.PARTICLES);
+                const radii = new Float32Array(Config.PARTICLES);
+                const speeds = new Float32Array(Config.PARTICLES);
+                const verticality = new Float32Array(Config.PARTICLES);
+
+                for (let i = 0; i < Config.PARTICLES; i++) {
+                    const t = Math.pow(Math.random(), Config.DENSITY_EXP); 
+                    const r = Config.RING_INNER + t * (Config.RING_OUTER - Config.RING_INNER);
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 5.0 / Math.sqrt(r);
+                    
+                    angles[i] = angle; radii[i] = r; speeds[i] = speed;
+                    
+                    const isHalo = Math.random() > 0.90; 
+                    if (isHalo) {
+                        const spread = (Math.random() - 0.5) * 2.0; 
+                        verticality[i] = spread * (Math.abs(spread) * 1); 
+                    } else {
+                        verticality[i] = (Math.random() - 0.5) * 0.1;
+                    }
+                    pos[i*3] = 0; pos[i*3+1] = 0; pos[i*3+2] = 0;
+                }
+
+                geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                geo.setAttribute('aAngle', new THREE.BufferAttribute(angles, 1));
+                geo.setAttribute('aRadius', new THREE.BufferAttribute(radii, 1));
+                geo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+                geo.setAttribute('aVerticality', new THREE.BufferAttribute(verticality, 1));
+
+                const mat = new THREE.ShaderMaterial({
+                    uniforms: uniforms,
+                    vertexShader: ShaderLib.Ring.vertex,
+                    fragmentShader: ShaderLib.Ring.fragment,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+
+                return new THREE.Points(geo, mat);
+            }
+        }
+
+        class CoreSystem {
+            constructor(scene, sharedUniforms) {
+                this.group = new THREE.Group();
+                this.outerShell = this.createOuterShell(sharedUniforms);
+                this.innerCore = this.createInnerCore(sharedUniforms);
+                this.group.add(this.outerShell);
+                this.group.add(this.innerCore);
+                scene.add(this.group);
+            }
+
+            createOuterShell(sharedUniforms) {
+                const container = new THREE.Group();
+                const geom = new THREE.IcosahedronGeometry(Config.CORE_RADIUS, 2);
+                const count = geom.attributes.position.count;
+                const ringAngles = new Float32Array(count);
+                for(let i=0; i<count; i++) ringAngles[i] = (i / count) * Math.PI * 2;
+                geom.setAttribute('aRingAngle', new THREE.BufferAttribute(ringAngles, 1));
+
+                const shellUniforms = THREE.UniformsUtils.clone(sharedUniforms);
+                shellUniforms.uRotationSpeed = { value: 0.2 };
+
+                const pointMat = new THREE.ShaderMaterial({
+                    uniforms: shellUniforms, vertexShader: ShaderLib.MorphCore.vertex, fragmentShader: ShaderLib.MorphCore.fragmentPoint,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+                container.add(new THREE.Points(geom, pointMat));
+
+                const wireGeom = new THREE.WireframeGeometry(geom);
+                const wireCount = wireGeom.attributes.position.count;
+                wireGeom.setAttribute('aRingAngle', new THREE.BufferAttribute(new Float32Array(wireCount), 1)); 
+                const wireMat = new THREE.ShaderMaterial({
+                    uniforms: shellUniforms, vertexShader: ShaderLib.MorphCore.vertex, fragmentShader: ShaderLib.MorphCore.fragmentWire,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+                container.add(new THREE.LineSegments(wireGeom, wireMat));
+
+                const braceletGeom = new THREE.BufferGeometry();
+                braceletGeom.setAttribute('position', geom.getAttribute('position'));
+                braceletGeom.setAttribute('aRingAngle', geom.getAttribute('aRingAngle')); 
+                const braceletMat = new THREE.ShaderMaterial({
+                    uniforms: shellUniforms, vertexShader: ShaderLib.MorphCore.vertex, fragmentShader: ShaderLib.MorphCore.fragmentBracelet,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+                container.add(new THREE.LineLoop(braceletGeom, braceletMat));
+
+                container.userData = { uniforms: shellUniforms }; 
+                return container;
+            }
+
+            createInnerCore(sharedUniforms) {
+                const container = new THREE.Group();
+
+                const addRingAttributes = (geo) => {
+                    const count = geo.attributes.position.count;
+                    const angles = new Float32Array(count);
+                    for(let i=0; i<count; i++) angles[i] = (i / count) * Math.PI * 2;
+                    geo.setAttribute('aRingAngle', new THREE.BufferAttribute(angles, 1));
+                };
+
+                const geoInner = new THREE.IcosahedronGeometry(Config.INNER_RADIUS * 0.6, 2); 
+                addRingAttributes(geoInner);
+                const uniformsInner = {
+                    ...THREE.UniformsUtils.clone(sharedUniforms),
+                    uRotationSpeed: { value: 0.3 }, 
+                    uColor: { value: new THREE.Color(0.3, 0.6, 0.8) }, 
+                    uOpacity: { value: 0.2 },
+                    uTargetRadius: { value: 0.0 }, 
+                    uCollapse: { value: 1.0 },
+                    uMorphBoost: { value: 10.0 }
+                };
+                
+                const matInnerWire = new THREE.ShaderMaterial({
+                    uniforms: uniformsInner, vertexShader: ShaderLib.InnerCore.vertex, fragmentShader: ShaderLib.InnerCore.fragmentWire,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+                });
+                const matInnerPoint = new THREE.ShaderMaterial({
+                    uniforms: uniformsInner, vertexShader: ShaderLib.InnerCore.vertex, fragmentShader: ShaderLib.InnerCore.fragmentPoint,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+                
+                const wireGeoInner = new THREE.WireframeGeometry(geoInner);
+                const wireCountInner = wireGeoInner.attributes.position.count;
+                const wireAnglesInner = new Float32Array(wireCountInner);
+                for(let i=0; i<wireCountInner; i++) wireAnglesInner[i] = (i/wireCountInner)*Math.PI*2;
+                wireGeoInner.setAttribute('aRingAngle', new THREE.BufferAttribute(wireAnglesInner, 1));
+
+                const meshInnerWire = new THREE.LineSegments(wireGeoInner, matInnerWire);
+                const meshInnerPoint = new THREE.Points(geoInner, matInnerPoint);
+                meshInnerWire.material.uniforms = uniformsInner; 
+                meshInnerPoint.material.uniforms = uniformsInner;
+                container.add(meshInnerWire);
+                container.add(meshInnerPoint);
+
+                const geoOuter = new THREE.IcosahedronGeometry(Config.INNER_RADIUS * 1.2, 1);
+                addRingAttributes(geoOuter);
+                const uniformsOuter = {
+                    ...THREE.UniformsUtils.clone(sharedUniforms),
+                    uRotationSpeed: { value: -0.15 }, 
+                    uColor: { value: new THREE.Color(1.0, 0.7, 0.4) }, 
+                    uOpacity: { value: 0.15 },
+                    uTargetRadius: { value: 3 }, 
+                    uCollapse: { value: 0.0 },
+                    uMorphBoost: { value: 40.0 }
+                };
+
+                const matOuterWire = new THREE.ShaderMaterial({
+                    uniforms: uniformsOuter, vertexShader: ShaderLib.InnerCore.vertex, fragmentShader: ShaderLib.InnerCore.fragmentWire,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+                });
+                const matOuterPoint = new THREE.ShaderMaterial({
+                    uniforms: uniformsOuter, vertexShader: ShaderLib.InnerCore.vertex, fragmentShader: ShaderLib.InnerCore.fragmentPoint,
+                    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                });
+
+                const wireGeoOuter = new THREE.WireframeGeometry(geoOuter);
+                const wireCountOuter = wireGeoOuter.attributes.position.count;
+                const wireAnglesOuter = new Float32Array(wireCountOuter);
+                for(let i=0; i<wireCountOuter; i++) wireAnglesOuter[i] = (i/wireCountOuter)*Math.PI*2;
+                wireGeoOuter.setAttribute('aRingAngle', new THREE.BufferAttribute(wireAnglesOuter, 1));
+
+                const meshOuterWire = new THREE.LineSegments(wireGeoOuter, matOuterWire);
+                const meshOuterPoint = new THREE.Points(geoOuter, matOuterPoint);
+                meshOuterWire.material.uniforms = uniformsOuter;
+                meshOuterPoint.material.uniforms = uniformsOuter;
+                container.add(meshOuterWire);
+                container.add(meshOuterPoint);
+
+                return container;
+            }
+
+            update(time, scale, morph, brightness) {
+                if (this.outerShell.userData.uniforms) {
+                    const u = this.outerShell.userData.uniforms;
+                    u.uTime.value = time;
+                    u.uScale.value = scale;
+                    u.uMorph.value = morph;
+                    u.uBrightness.value = brightness;
+                }
+                this.innerCore.children.forEach(child => {
+                    if (child.material.uniforms) {
+                        child.material.uniforms.uTime.value = time;
+                        child.material.uniforms.uScale.value = scale;
+                        child.material.uniforms.uBrightness.value = brightness;
+                        child.material.uniforms.uMorph.value = morph; 
+                    }
+                });
+            }
+        }
+
+        class InputManager {
+            constructor(uiManager) {
+                this.ui = uiManager;
+                this.mouseNDC = new THREE.Vector2(999, 999);
+                this.handData = { active: false, ndc: new THREE.Vector2(), closed: false };
+                this.videoElement = null;
+                this.cameraUtils = null;
+                this.hands = null;
+                this.isCameraRunning = false;
+                
+                this.onClick = null;
+
+                this.initMouse();
+                this.initCameraControls();
+            }
+
+            initMouse() {
+                window.addEventListener('mousemove', (e) => {
+                    this.mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    this.mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                });
+                
+                window.addEventListener('click', (e) => {
+                    // Prevent click through if clicking on UI elements
+                    if (e.target.closest('#gemini-interface') || e.target.closest('button')) return;
+                    if (this.onClick) this.onClick();
+                });
+            }
+
+            initCameraControls() {
+                this.ui.btnCam.addEventListener('click', async () => {
+                    if (this.isCameraRunning) {
+                        await this.stopCamera();
+                        this.ui.updateCamButton("SENSOR: OFF");
+                        this.ui.updateStatus("MOUSE ONLY MODE");
+                    } else {
+                        this.ui.updateCamButton("INIT...");
+                        this.ui.updateStatus("BOOTING SENSOR...");
+                        await this.startCamera();
+                        if (this.isCameraRunning) {
+                            this.ui.updateCamButton("SENSOR: ON");
+                            this.ui.updateStatus("HAND DETECTED: OPEN TO MORPH");
+                        }
+                    }
+                });
+            }
+
+            async startCamera() {
+                if (!this.videoElement) this.videoElement = document.createElement('video');
+                if (!this.hands) {
+                    this.hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+                    this.hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+                    this.hands.onResults(this.onHandResults.bind(this));
+                }
+                if (!this.cameraUtils) {
+                    this.cameraUtils = new Camera(this.videoElement, { onFrame: async () => { if(this.hands) await this.hands.send({image: this.videoElement}); }, width: 320, height: 240 });
+                }
+                try {
+                    await this.cameraUtils.start();
+                    this.isCameraRunning = true;
+                } catch (e) {
+                    console.error("Camera failed:", e);
+                    alert("Camera access denied.");
+                    this.isCameraRunning = false;
+                }
+            }
+
+            async stopCamera() {
+                if (this.cameraUtils) await this.cameraUtils.stop();
+                if (this.videoElement && this.videoElement.srcObject) {
+                    this.videoElement.srcObject.getTracks().forEach(track => track.stop());
+                    this.videoElement.srcObject = null;
+                }
+                this.isCameraRunning = false;
+                this.handData.active = false;
+            }
+
+            onHandResults(results) {
+                if (!this.isCameraRunning) return;
+                if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                    const lm = results.multiHandLandmarks[0];
+                    const wrist = lm[0];
+                    const middleTip = lm[12];
+                    const len = Math.sqrt(Math.pow(middleTip.x-wrist.x,2) + Math.pow(middleTip.y-wrist.y,2) + Math.pow(middleTip.z-wrist.z,2));
+                    
+                    this.handData.active = true;
+                    this.handData.ndc.set(1.0 - (lm[9].x * 2), -(lm[9].y * 2 - 1));
+                    this.handData.closed = len < 0.3;
+                } else {
+                    this.handData.active = false;
+                }
+            }
+        }
+
+        // =========================================================
+        // 5. MAIN ENGINE
+        // =========================================================
+
+        class Engine {
+            constructor() {
+                this.ui = new UIManager();
+                this.ctx = new RenderContext('canvas-container');
+                this.input = new InputManager(this.ui);
+                
+                this.uniforms = {
+                    uTime: { value: 0 },
+                    uScale: { value: 0.6 },
+                    uBrightness: { value: 1.0 },
+                    uTexture: { value: Utils.createNoiseTexture() },
+                    uMousePos: { value: new THREE.Vector3() },
+                    uMouseActive: { value: false },
+                    uHandPos: { value: new THREE.Vector3() },
+                    uHandActive: { value: false },
+                    uMorph: { value: 0.0 }, 
+                    uColorInner: { value: Config.COLORS.INNER },
+                    uColorMid: { value: Config.COLORS.MID },
+                    uColorOuter: { value: Config.COLORS.OUTER }
+                };
+
+                this.raycaster = new THREE.Raycaster();
+                this.interactionPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(100, 100).rotateX(-Math.PI / 2),
+                    new THREE.MeshBasicMaterial({ visible: false })
+                );
+                this.ctx.scene.add(this.interactionPlane);
+
+                this.rings = new RingSystem(this.ctx.scene, this.uniforms);
+                this.core = new CoreSystem(this.ctx.scene, this.uniforms);
+
+                this.targetScale = 1.5;
+                this.currentScale = 1.5;
+                this.targetMorph = 0.0;
+                this.currentMorph = 0.0;
+
+                this.input.onClick = this.handleClick.bind(this);
+                this.animate = this.animate.bind(this);
+                requestAnimationFrame(this.animate);
+            }
+
+            get3DPosition(ndc) {
+                this.interactionPlane.rotation.copy(this.rings.mesh.rotation);
+                this.interactionPlane.updateMatrixWorld();
+                this.raycaster.setFromCamera(ndc, this.ctx.camera);
+                const intersects = this.raycaster.intersectObject(this.interactionPlane);
+                
+                if (intersects.length > 0) {
+                    const worldPoint = intersects[0].point;
+                    const localPoint = worldPoint.clone();
+                    this.rings.mesh.worldToLocal(localPoint);
+                    return localPoint;
+                }
+                return null;
+            }
+
+            handleClick() {
+                if (this.ui.isPanelOpen) {
+                    // Do not close chat if clicking inside settings
+                    if (event.target.closest('#settings-panel')) return;
+                    // Otherwise potentially handle close, but let UI manager handle precise clicks
+                    return;
+                }
+                const mouseLocal = this.get3DPosition(this.input.mouseNDC);
+                if (mouseLocal) {
+                    const dist = mouseLocal.length();
+                    if (dist < Config.CORE_RADIUS * 1.5) {
+                        if (this.currentMorph > 0.8) {
+                            this.ui.openPanel();
+                        } else {
+                            this.ui.updateStatus("ACCESS DENIED: CORE IS STABLE");
+                            setTimeout(() => {
+                                if (!this.ui.isPanelOpen) {
+                                    this.ui.updateStatus("SYSTEM READY // CLICK CORE TO CHAT");
+                                }
+                            }, 1500);
+                        }
+                    }
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(this.animate);
+                
+                const delta = this.ui.isPanelOpen ? 0.001 : 0.005; 
+                this.uniforms.uTime.value += delta;
+                
+                if (this.input.handData.active) {
+                    this.targetScale = this.input.handData.closed ? 1.5 : 1.8;
+                    this.targetMorph = this.input.handData.closed ? 0.0 : 1.0;
+                    
+                    const handLocal = this.get3DPosition(this.input.handData.ndc);
+                    if (handLocal) this.uniforms.uHandPos.value.copy(handLocal);
+                    this.uniforms.uHandActive.value = true;
+                } else {
+                    this.targetScale = 1.5;
+                    this.targetMorph = 0.0;
+                    this.uniforms.uHandActive.value = false;
+                }
+
+                if (this.ui.isPanelOpen) {
+                    this.targetMorph = 1.0;
+                    this.targetScale = 1.8;
+                }
+
+                const mouseLocal = this.get3DPosition(this.input.mouseNDC);
+                if (mouseLocal) {
+                    this.uniforms.uMousePos.value.copy(mouseLocal);
+                    this.uniforms.uMouseActive.value = true;
+                } else {
+                    this.uniforms.uMouseActive.value = false;
+                }
+
+                this.currentScale += (this.targetScale - this.currentScale) * 0.05;
+                this.currentMorph += (this.targetMorph - this.currentMorph) * 0.05;
+
+                this.uniforms.uScale.value = this.currentScale;
+                this.uniforms.uMorph.value = this.currentMorph;
+                
+                let targetBright = 0.7 + Math.pow(this.currentScale * 0.5, 3.0);
+                if (this.ui.isPanelOpen) targetBright *= 0.3; 
+                this.uniforms.uBrightness.value += (targetBright - this.uniforms.uBrightness.value) * 0.1;
+
+                this.core.update(this.uniforms.uTime.value, this.currentScale, this.currentMorph, this.uniforms.uBrightness.value);
+
+                const baseTiltX = 12 * (Math.PI / 180);
+                const baseTiltZ = 25 * (Math.PI / 180);
+                const wobble = Math.sin(this.uniforms.uTime.value * 0.3) * 0.08;
+                const rotX = baseTiltX + wobble;
+                
+                [this.rings.mesh, this.core.group].forEach(obj => {
+                    if(obj) { obj.rotation.x = rotX; obj.rotation.z = baseTiltZ; }
+                });
+
+                this.ctx.camera.position.x = Math.sin(this.uniforms.uTime.value * 0.15) * 1.5;
+                this.ctx.camera.position.y = 6 + Math.cos(this.uniforms.uTime.value * 0.1) * 0.5;
+                this.ctx.camera.lookAt(0, 0, 0);
+
+                this.ctx.render();
+            }
+        }
+
+        window.onload = () => new Engine();
+
     </script>
 </body>
 </html>
